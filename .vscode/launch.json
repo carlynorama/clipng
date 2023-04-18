@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "name": "Debug clipng",
+            "program": "${workspaceFolder:clipng}/.build/debug/clipng",
+            "args": [],
+            "cwd": "${workspaceFolder:clipng}",
+            "preLaunchTask": "swift: Build Debug clipng"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "name": "Release clipng",
+            "program": "${workspaceFolder:clipng}/.build/release/clipng",
+            "args": [],
+            "cwd": "${workspaceFolder:clipng}",
+            "preLaunchTask": "swift: Build Release clipng"
+        }
+    ]
+}
