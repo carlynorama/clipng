@@ -1,3 +1,12 @@
+
+
+#if os(Linux)
+import Glibc
+#else
+import Darwin.C
+
+#endif
+
 import Foundation
 import ArgumentParser
 import SwiftLIBPNG
@@ -20,7 +29,7 @@ struct Flags: ParsableArguments {
     var hexadecimalOutput = false
     
     @Flag(name: [.customLong("verbose"), .customShort("v")],
-        help: "Print extra information to the console.")
+          help: "Print extra information to the console.")
     var verboseOutput = false
 }
 
@@ -53,38 +62,24 @@ extension clipng {
                 }
                 
                 do {
-                    if #available(macOS 13.0, *) {
-                        let formatter = DateFormatter()
-                        formatter.dateFormat = "YYYYMMdd'T'HHmmss"
-                        let fileName = "random_purple_\(formatter.string(from: Date.now)).png"
-                    try data.write(to: URL(filePath: fileName))
-                    } else {
-                        print("write a better function.")
-                    }
+                    let fileName = "random_purple_\(FileIO.timeStamp()).png"
+                    try FileIO.writeDataToFile(data: data, filePath: fileName)
                 } catch {
                     print("could not save")
                 }
-
-                
-                //                let locationToWrite = URL.documentsDirectory.appendingPathComponent("testImage", conformingTo: .png)
-                //                do {
-                //                    try data.write(to: locationToWrite)
-                //                } catch {
-                //                    print(error.self)
-                //                }
             }
         }
     }
     
-//    struct Multiply: ParsableCommand {
-//        static var configuration =
-//        CommandConfiguration(abstract: "Print the product of the values.")
-//
-//        @OptionGroup var options: Options
-//
-//        mutating func run() {
-//            let result = options.values.reduce(1, *)
-//            print(format(result, usingHex: options.hexadecimalOutput))
-//        }
-//    }
+    //    struct Multiply: ParsableCommand {
+    //        static var configuration =
+    //        CommandConfiguration(abstract: "Print the product of the values.")
+    //
+    //        @OptionGroup var options: Options
+    //
+    //        mutating func run() {
+    //            let result = options.values.reduce(1, *)
+    //            print(format(result, usingHex: options.hexadecimalOutput))
+    //        }
+    //    }
 }
