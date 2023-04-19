@@ -51,8 +51,9 @@ struct FileIO {
     
     //---------
     //https://www.swiftbysundell.com/articles/working-with-files-and-folders-in-swift/
-    
     //FileManager.default.temporaryDirectory, .cachesDirectory
+    
+    
     static func write<T: Encodable>(
         _ value: T,
         toDocumentNamed documentName: String,
@@ -70,6 +71,7 @@ struct FileIO {
         try data.write(to: fileURL)
     }
     
+#if !os(Linux)
     //TODO: What happens when folders in a path don't exist with writeDataToFile
     @available(macOS 13.0, *)
     static func write<T: Encodable>(
@@ -83,7 +85,7 @@ struct FileIO {
             in: .userDomainMask,
             appropriateFor: nil,
             create: false
-        ).appending(component: folderName)
+        ).appending(component: folderName) //not available linux use older .appendingPathComponent
         
         if !FileManager.default.fileExists(atPath: folderURL.relativePath) {
             try FileManager.default.createDirectory(
@@ -97,5 +99,6 @@ struct FileIO {
         let data = try encoder.encode(value)
         try data.write(to: fileURL)
     }
+    #endif
     
 }
