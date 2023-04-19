@@ -10,23 +10,23 @@ struct clipng:ParsableCommand {
         
         // Commands can define a version for automatic '--version' support.
         version: "0.0.1",
-        subcommands: [random_purple.self, Multiply.self],
+        subcommands: [random_purple.self],
         defaultSubcommand: random_purple.self)
 }
 
-struct Options: ParsableArguments {
+struct Flags: ParsableArguments {
     @Flag(name: [.customLong("hex-output"), .customShort("x")],
           help: "Use hexadecimal notation for the result.")
     var hexadecimalOutput = false
     
-    @Argument(
-        help: "A group of integers to operate on.")
-    var values: [Int] = []
+    @Flag(name: [.customLong("verbose"), .customShort("v")],
+        help: "Print extra information to the console.")
+    var verboseOutput = false
 }
 
 extension clipng {
     static func format(_ result: Int, usingHex: Bool) -> String {
-        usingHex ? String(result, radix: 16)
+        usingHex ? String(format: "0x%02x", result)
         : String(result)
     }
     
@@ -38,13 +38,33 @@ extension clipng {
         @Argument var width:UInt32
         @Argument var height:UInt32
         
+        @OptionGroup var flags: Flags
+        
         mutating func run() {
+            
             let data = try? SwiftLIBPNG.buildSimpleDataExample(width: width, height: height, pixelData: PixelGenerator.purple_pixels_RGBA(width: Int(width), height: Int(height)))
             if let data {
-                for item in data {
-                    print(String(format: "0x%02x", item), terminator: "\t")
+                if flags.verboseOutput {
+                    for item in data {
+                        
+                        print(format(Int(item), usingHex: flags.hexadecimalOutput), terminator: "\t")
+                    }
+                    print()
                 }
-                print()
+                
+                do {
+                    if #available(macOS 13.0, *) {
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "YYYYMMdd'T'HHmmss"
+                        let fileName = "random_purple_\(formatter.string(from: Date.now)).png"
+                    try data.write(to: URL(filePath: fileName))
+                    } else {
+                        print("write a better function.")
+                    }
+                } catch {
+                    print("could not save")
+                }
+
                 
                 //                let locationToWrite = URL.documentsDirectory.appendingPathComponent("testImage", conformingTo: .png)
                 //                do {
@@ -56,15 +76,15 @@ extension clipng {
         }
     }
     
-    struct Multiply: ParsableCommand {
-        static var configuration =
-        CommandConfiguration(abstract: "Print the product of the values.")
-        
-        @OptionGroup var options: Options
-        
-        mutating func run() {
-            let result = options.values.reduce(1, *)
-            print(format(result, usingHex: options.hexadecimalOutput))
-        }
-    }
+//    struct Multiply: ParsableCommand {
+//        static var configuration =
+//        CommandConfiguration(abstract: "Print the product of the values.")
+//
+//        @OptionGroup var options: Options
+//
+//        mutating func run() {
+//            let result = options.values.reduce(1, *)
+//            print(format(result, usingHex: options.hexadecimalOutput))
+//        }
+//    }
 }
