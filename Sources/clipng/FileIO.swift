@@ -5,6 +5,14 @@
 //  Created by Labtanza on 4/19/23.
 //
 
+
+//#if os(Linux)
+//import Glibc
+//#else
+//import Darwin.C
+//
+//#endif
+
 import Foundation
 
 
@@ -24,12 +32,16 @@ struct FileIO {
         //TODO: For iOS?? 
         //let locationToWrite = URL.documentsDirectory.appendingPathComponent("testImage", conformingTo: .png)
         
+        #if os(Linux)
+        try data.write(to:URL(fileURLWithPath: filePath))
+        #else
         if #available(macOS 13.0, *) {
             try data.write(to: URL(filePath: filePath))
         } else {
             // Fallback on earlier versions
             try data.write(to:URL(fileURLWithPath: filePath))
         }
+        #endif
         
         
         
