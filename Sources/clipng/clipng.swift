@@ -6,12 +6,12 @@ import SwiftLIBPNG
 struct clipng:ParsableCommand {
 static var configuration = CommandConfiguration(
         // Optional abstracts and discussions are used for help output.
-        abstract: "A utility for performing maths.",
+        abstract: "A interface for testing SwiftLIBPNG.",
 
         // Commands can define a version for automatic '--version' support.
         version: "0.0.1",
-        subcommands: [Add.self, Multiply.self],
-        defaultSubcommand: Add.self)
+        subcommands: [random_purple.self, Multiply.self],
+        defaultSubcommand: random_purple.self)
 }
 
 struct Options: ParsableArguments {
@@ -30,17 +30,38 @@ static func format(_ result: Int, usingHex: Bool) -> String {
             : String(result)
     }
 
-    struct Add: ParsableCommand {
+    struct random_purple: ParsableCommand {
+        
         static var configuration =
-            CommandConfiguration(abstract: "Print the sum of the values.")
-
-        // The `@OptionGroup` attribute includes the flags, options, and
-        // arguments defined by another `ParsableArguments` type.
-        @OptionGroup var options: Options
-
+            CommandConfiguration(abstract: "Generate a RGBA PNG file with each pixel a random shade of purple.")
+        
+        @Argument var width:Int
+        @Argument var height:Int
+        var pixelData:[UInt8] = []
+        
         mutating func run() {
-            let result = options.values.reduce(0, +)
-            print(format(result, usingHex: options.hexadecimalOutput))
+            for _ in 0..<height {
+                for _ in 0..<width {
+                    pixelData.append(0x77)
+                    pixelData.append(0x00)
+                    pixelData.append(UInt8.random(in: 0...UInt8.max))
+                    pixelData.append(0xFF)
+                }
+            }
+            let data = try? SwiftLIBPNG.buildSimpleDataExample(width: 5, height: 3, pixelData: pixelData)
+            if let data {
+                for item in data {
+                    print(String(format: "0x%02x", item), terminator: "\t")
+                }
+                print()
+                
+//                let locationToWrite = URL.documentsDirectory.appendingPathComponent("testImage", conformingTo: .png)
+//                do {
+//                    try data.write(to: locationToWrite)
+//                } catch {
+//                    print(error.self)
+//                }
+            }
         }
     }
 
