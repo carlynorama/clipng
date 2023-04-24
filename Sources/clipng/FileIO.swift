@@ -21,11 +21,8 @@ struct FileIO {
     static func timeStamp() -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "YYYYMMdd'T'HHmmss"
-        if #available(macOS 12, *) {
-            return formatter.string(from: Date.now)
-        } else {
-            return formatter.string(from: Date.init(timeIntervalSinceReferenceDate: Date.timeIntervalSinceReferenceDate))
-        }
+        return formatter.string(from: Date())
+        
     }
     
     static func makeFileURL(filePath:String) -> URL {
