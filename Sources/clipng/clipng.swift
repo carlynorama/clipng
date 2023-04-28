@@ -11,7 +11,7 @@ struct clipng:ParsableCommand {
         // Commands can define a version for automatic '--version' support.
         version: "0.0.1",
         subcommands: [
-            random_purple.self, 
+            purple.self, 
             random.self,
             vbars_grayscale.self
         ],
@@ -91,7 +91,7 @@ extension clipng {
     }
 
     
-    struct random_purple: ParsableCommand {
+    struct purple: ParsableCommand {
         
         static var configuration =
         CommandConfiguration(abstract: "Generate a RGBA PNG file with each pixel a random shade of purple.")
