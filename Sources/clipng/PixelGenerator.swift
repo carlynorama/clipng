@@ -89,15 +89,22 @@ struct PixelGenerator {
                 pixelData.append(contentsOf: random32Bit().bytes)
             }
         }
-        
         return pixelData
     }
     
-    static func grayscale_random(width:Int, height:Int) -> [UInt8] {
+    static func grayscale_random8(width:Int, height:Int, includeAlpha:Bool = false) -> [UInt8] {
         var pixelData:[UInt8] = []
         let count = height * width
-        for _ in 0..<count {
-            pixelData.append(randomByte())
+        if includeAlpha {
+            for _ in 0..<count {
+                pixelData.append(randomByte())
+                pixelData.append(randomByte())
+            }
+        } 
+        else {
+            for _ in 0..<count {
+                pixelData.append(randomByte())
+            }
         }
         return pixelData
     }
