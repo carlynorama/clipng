@@ -10,7 +10,7 @@ struct clipng:ParsableCommand {
         
         // Commands can define a version for automatic '--version' support.
         version: "0.0.1",
-        subcommands: [random_purple.self],
+        subcommands: [random_purple.self, striped_grayscale.self],
         defaultSubcommand: random_purple.self)
 }
 
@@ -42,7 +42,7 @@ extension clipng {
         
         mutating func run() {
             
-            let data = try? SwiftLIBPNG.buildSimpleDataExample(width: width, height: height, pixelData: PixelGenerator.purple_pixels_RGBA(width: Int(width), height: Int(height)))
+            let data = try? SwiftLIBPNG.optionalPNGForRGBA(width: width, height: height, pixelData: PixelGenerator.purple_pixels_RGBA8(width: Int(width), height: Int(height)))
             if let data {
                 if flags.verboseOutput {
                     for item in data {
@@ -62,15 +62,35 @@ extension clipng {
         }
     }
     
-    //    struct Multiply: ParsableCommand {
-    //        static var configuration =
-    //        CommandConfiguration(abstract: "Print the product of the values.")
-    //
-    //        @OptionGroup var options: Options
-    //
-    //        mutating func run() {
-    //            let result = options.values.reduce(1, *)
-    //            print(format(result, usingHex: options.hexadecimalOutput))
-    //        }
-    //    }
+    struct striped_grayscale: ParsableCommand {
+        
+        static var configuration =
+        CommandConfiguration(abstract: "Generate a grayscale PNG where the first column is black, the second, random, the third, white.")
+        
+        @Argument var width:UInt32
+        @Argument var height:UInt32
+        
+        @OptionGroup var flags: Flags
+        
+        mutating func run() {
+            
+            let data = try? SwiftLIBPNG.pngData(for: PixelGenerator.grayscale_randomAlphaTest(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscaleA)
+            if let data {
+                if flags.verboseOutput {
+                    for item in data {
+                        
+                        print(format(Int(item), usingHex: flags.hexadecimalOutput), terminator: "\t")
+                    }
+                    print()
+                }
+                
+                do {
+                    let fileName = "grayscale_vstripe_walpha_\(FileIO.timeStamp()).png"
+                    try FileIO.writeDataToFile(data: data, filePath: fileName)
+                } catch {
+                    print("could not save")
+                }
+            }
+        }
+    }
 }
