@@ -138,7 +138,7 @@ extension clipng {
                 fileName = "verticalAlphaStripes_GA8_\(FileIO.timeStamp()).png"
                 data = try? SwiftLIBPNG.pngData(for: PixelGenerator.grayscale_randomAlphaTest(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscaleA)
             } else {
-                fileName = "verticalAlphaStripes_G8_\(FileIO.timeStamp()).png"
+                fileName = "verticalStripes_G8_\(FileIO.timeStamp()).png"
                 data = try? SwiftLIBPNG.pngData(for: PixelGenerator.grayscale_verticalStripe(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscale)
             }
 
