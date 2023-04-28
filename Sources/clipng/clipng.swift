@@ -12,10 +12,10 @@ struct clipng:ParsableCommand {
         version: "0.0.1",
         subcommands: [
             random_purple.self, 
+            random_pixels.self,
             striped_grayscale.self
-
         ],
-        defaultSubcommand: random_purple.self)
+        defaultSubcommand: random_pixels.self)
 }
 
 struct Flags: ParsableArguments {
@@ -70,7 +70,7 @@ extension clipng {
     struct striped_grayscale: ParsableCommand {
         
         static var configuration =
-        CommandConfiguration(abstract: "Generate a grayscale PNG where the first column is black, the second, random, the third, white.")
+        CommandConfiguration(abstract: "Generate a grayscale PNG where the first column is black, the second, random, the third, white. If alpha flag is set, black and white columns will have a random alpha.")
         
         @Argument var width:UInt32
         @Argument var height:UInt32
@@ -96,6 +96,36 @@ extension clipng {
             }
         }
     }
+
+    struct random_pixels: ParsableCommand {
+        
+        static var configuration =
+        CommandConfiguration(abstract: "Generate a RGBA PNG file with each pixel a random 24 or 32 bit color.")
+        
+        @Argument var width:UInt32
+        @Argument var height:UInt32
+        
+        @OptionGroup var flags: Flags
+        
+        mutating func run() {
+            
+            let data:Data? 
+            let fileName:String
+            if flags.includeAlpha {
+                fileName = "random_RGBA8_\(FileIO.timeStamp()).png"
+                data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_randomRGBA8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolorA)
+            } else {
+                fileName = "random_RGB8_\(FileIO.timeStamp()).png"
+                data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_randomRGB8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor)
+            }
+            
+
+            if let data {
+                saveData(data, fileName:fileName, flags: flags)
+            }
+        }
+    }
+
 
     static func saveData(_ data:Data, fileName:String, flags:Flags) {
         if flags.verboseOutput {
