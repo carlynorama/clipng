@@ -10,7 +10,11 @@ struct clipng:ParsableCommand {
         
         // Commands can define a version for automatic '--version' support.
         version: "0.0.1",
-        subcommands: [random_purple.self, striped_grayscale.self],
+        subcommands: [
+            random_purple.self, 
+            striped_grayscale.self
+
+        ],
         defaultSubcommand: random_purple.self)
 }
 
@@ -22,6 +26,10 @@ struct Flags: ParsableArguments {
     @Flag(name: [.customLong("verbose"), .customShort("v")],
           help: "Print extra information to the console.")
     var verboseOutput = false
+
+    @Flag(name: [.customLong("alpha"), .customShort("a")],
+          help: "Generate PNG data with alpha channel.")
+    var includeAlpha:Bool = false
 }
 
 extension clipng {
@@ -42,22 +50,19 @@ extension clipng {
         
         mutating func run() {
             
-            let data = try? SwiftLIBPNG.optionalPNGForRGBA(width: width, height: height, pixelData: PixelGenerator.purple_pixels_RGBA8(width: Int(width), height: Int(height)))
+            let data:Data? 
+            let fileName:String
+            if flags.includeAlpha {
+                fileName = "random_purple_RGBA8_\(FileIO.timeStamp()).png"
+                data = SwiftLIBPNG.optionalPNGForRGBA(width: width, height: height, pixelData: PixelGenerator.purple_pixels_RGBA8(width: Int(width), height: Int(height)))
+            } else {
+                fileName = "random_purple_RGB8_\(FileIO.timeStamp()).png"
+                data = try? SwiftLIBPNG.pngData(for:PixelGenerator.purple_pixels_RGB8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor)
+            }
+            
+
             if let data {
-                if flags.verboseOutput {
-                    for item in data {
-                        
-                        print(format(Int(item), usingHex: flags.hexadecimalOutput), terminator: "\t")
-                    }
-                    print()
-                }
-                
-                do {
-                    let fileName = "random_purple_\(FileIO.timeStamp()).png"
-                    try FileIO.writeDataToFile(data: data, filePath: fileName)
-                } catch {
-                    print("could not save")
-                }
+                saveData(data, fileName:fileName, flags: flags)
             }
         }
     }
@@ -73,24 +78,37 @@ extension clipng {
         @OptionGroup var flags: Flags
         
         mutating func run() {
-            
-            let data = try? SwiftLIBPNG.pngData(for: PixelGenerator.grayscale_randomAlphaTest(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscaleA)
-            if let data {
-                if flags.verboseOutput {
-                    for item in data {
-                        
-                        print(format(Int(item), usingHex: flags.hexadecimalOutput), terminator: "\t")
-                    }
-                    print()
-                }
-                
-                do {
-                    let fileName = "grayscale_vstripe_walpha_\(FileIO.timeStamp()).png"
-                    try FileIO.writeDataToFile(data: data, filePath: fileName)
-                } catch {
-                    print("could not save")
-                }
+
+            let data:Data? 
+            let fileName:String
+            if flags.includeAlpha {
+                fileName = "verticalAlphaStripes_GA8_\(FileIO.timeStamp()).png"
+                data = try? SwiftLIBPNG.pngData(for: PixelGenerator.grayscale_randomAlphaTest(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscaleA)
+            } else {
+                fileName = "verticalAlphaStripes_G8_\(FileIO.timeStamp()).png"
+                data = try? SwiftLIBPNG.pngData(for: PixelGenerator.grayscale_verticalStripe(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscale)
             }
+
+            
+                
+            if let data {
+                saveData(data, fileName:fileName, flags: flags)
+            }
+        }
+    }
+
+    static func saveData(_ data:Data, fileName:String, flags:Flags) {
+        if flags.verboseOutput {
+            for item in data {
+                print(format(Int(item), usingHex: flags.hexadecimalOutput), terminator: "\t")
+            }
+            print()
+        }
+        
+        do {
+            try FileIO.writeDataToFile(data: data, filePath: fileName)
+        } catch {
+            print("could not save")
         }
     }
 }
