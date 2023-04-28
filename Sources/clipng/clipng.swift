@@ -30,6 +30,10 @@ struct Flags: ParsableArguments {
     @Flag(name: [.customLong("alpha"), .customShort("a")],
           help: "Generate PNG data with alpha channel.")
     var includeAlpha:Bool = false
+
+    @Flag(name: [.customLong("grayscale"), .customShort("g")],
+          help: "Generate PNG data as a grayscale pallette. For functions where this not implemented or relevant, flag will be ignored.")
+    var isGrayScale:Bool = false
 }
 
 extension clipng {
@@ -37,6 +41,55 @@ extension clipng {
         usingHex ? String(format: "0x%02x", result)
         : String(result)
     }
+
+    struct random_pixels: ParsableCommand {
+        
+        static var configuration =
+        CommandConfiguration(abstract: "Generate a RGBA PNG file with each pixel a random 24 or 32 bit color.")
+        
+        @Argument var width:UInt32
+        @Argument var height:UInt32
+        
+        @OptionGroup var flags: Flags
+        
+        mutating func run() {
+            if flags.verboseOutput {
+                if flags.isGrayScale {
+                    print("grayscale requested.")
+                }
+                if flags.includeAlpha {
+                    print("alpha channel requested.")
+                }
+            }
+
+            
+            let data:Data? 
+            let fileName:String
+            if flags.includeAlpha {
+                if flags.isGrayScale { 
+                    fileName = "random_GA8_\(FileIO.timeStamp()).png"
+                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.grayscale_random8(width: Int(width), height: Int(height), includeAlpha: true), width: width, height: height, bitDepth: .eight, colorType: .grayscaleA)
+                } else { 
+                    fileName = "random_RGBA8_\(FileIO.timeStamp()).png"
+                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_randomRGBA8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolorA)
+                }
+            } else {
+                if flags.isGrayScale { 
+                    fileName = "random_G8_\(FileIO.timeStamp()).png"
+                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.grayscale_random8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscale)
+                } else { 
+                    fileName = "random_RGB8_\(FileIO.timeStamp()).png"
+                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_randomRGB8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor)
+                }
+            }
+            
+
+            if let data {
+                saveData(data, fileName:fileName, flags: flags)
+            }
+        }
+    }
+
     
     struct random_purple: ParsableCommand {
         
@@ -97,34 +150,6 @@ extension clipng {
         }
     }
 
-    struct random_pixels: ParsableCommand {
-        
-        static var configuration =
-        CommandConfiguration(abstract: "Generate a RGBA PNG file with each pixel a random 24 or 32 bit color.")
-        
-        @Argument var width:UInt32
-        @Argument var height:UInt32
-        
-        @OptionGroup var flags: Flags
-        
-        mutating func run() {
-            
-            let data:Data? 
-            let fileName:String
-            if flags.includeAlpha {
-                fileName = "random_RGBA8_\(FileIO.timeStamp()).png"
-                data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_randomRGBA8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolorA)
-            } else {
-                fileName = "random_RGB8_\(FileIO.timeStamp()).png"
-                data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_randomRGB8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor)
-            }
-            
-
-            if let data {
-                saveData(data, fileName:fileName, flags: flags)
-            }
-        }
-    }
 
 
     static func saveData(_ data:Data, fileName:String, flags:Flags) {
