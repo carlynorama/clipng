@@ -12,10 +12,10 @@ struct clipng:ParsableCommand {
         version: "0.0.1",
         subcommands: [
             random_purple.self, 
-            random_pixels.self,
-            striped_grayscale.self
+            random.self,
+            vbars_grayscale.self
         ],
-        defaultSubcommand: random_pixels.self)
+        defaultSubcommand: random.self)
 }
 
 struct Flags: ParsableArguments {
@@ -42,7 +42,7 @@ extension clipng {
         : String(result)
     }
 
-    struct random_pixels: ParsableCommand {
+    struct random: ParsableCommand {
         
         static var configuration =
         CommandConfiguration(abstract: "Generate a RGBA PNG file with each pixel a random 24 or 32 bit color.")
@@ -71,7 +71,7 @@ extension clipng {
                     data = try? SwiftLIBPNG.pngData(for:PixelGenerator.grayscale_random8(width: Int(width), height: Int(height), includeAlpha: true), width: width, height: height, bitDepth: .eight, colorType: .grayscaleA)
                 } else { 
                     fileName = "random_RGBA8_\(FileIO.timeStamp()).png"
-                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_randomRGBA8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolorA)
+                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_random8(width: Int(width), height: Int(height), includeAlpha:true), width: width, height: height, bitDepth: .eight, colorType: .truecolorA)
                 }
             } else {
                 if flags.isGrayScale { 
@@ -79,7 +79,7 @@ extension clipng {
                     data = try? SwiftLIBPNG.pngData(for:PixelGenerator.grayscale_random8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscale)
                 } else { 
                     fileName = "random_RGB8_\(FileIO.timeStamp()).png"
-                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_randomRGB8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor)
+                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_random8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor)
                 }
             }
             
@@ -107,10 +107,10 @@ extension clipng {
             let fileName:String
             if flags.includeAlpha {
                 fileName = "random_purple_RGBA8_\(FileIO.timeStamp()).png"
-                data = SwiftLIBPNG.optionalPNGForRGBA(width: width, height: height, pixelData: PixelGenerator.purple_pixels_RGBA8(width: Int(width), height: Int(height)))
+                data = SwiftLIBPNG.optionalPNGForRGBA(width: width, height: height, pixelData: PixelGenerator.purple_pixels(width: Int(width), height: Int(height), includeAlpha:true))
             } else {
                 fileName = "random_purple_RGB8_\(FileIO.timeStamp()).png"
-                data = try? SwiftLIBPNG.pngData(for:PixelGenerator.purple_pixels_RGB8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor)
+                data = try? SwiftLIBPNG.pngData(for:PixelGenerator.purple_pixels(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor)
             }
             
 
@@ -120,7 +120,7 @@ extension clipng {
         }
     }
     
-    struct striped_grayscale: ParsableCommand {
+    struct vbars_grayscale: ParsableCommand {
         
         static var configuration =
         CommandConfiguration(abstract: "Generate a grayscale PNG where the first column is black, the second, random, the third, white. If alpha flag is set, black and white columns will have a random alpha.")

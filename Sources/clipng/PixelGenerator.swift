@@ -30,52 +30,62 @@ struct PixelGenerator {
     }
 
     
-    static func purple_pixels_RGBA8(width:Int, height:Int) -> [UInt8] {
+    static func purple_pixels(width:Int, height:Int, includeAlpha:Bool = false) -> [UInt8] {
         var pixelData:[UInt8] = []
-        for _ in 0..<height {
-            for _ in 0..<width {
-                pixelData.append(0x77)
-                pixelData.append(0x00)
-                pixelData.append(randomByte())
-                pixelData.append(0xFF)
+        if includeAlpha {
+            for _ in 0..<height {
+                for _ in 0..<width {
+                    pixelData.append(0x77)
+                    pixelData.append(0x00)
+                    pixelData.append(randomByte())
+                    pixelData.append(0xFF)
+                }
+            }
+        } else {
+            for _ in 0..<height {
+                for _ in 0..<width {
+                    pixelData.append(0x77)
+                    pixelData.append(0x00)
+                    pixelData.append(randomByte())
+                }
             }
         }
+
         return pixelData
     }
     
-    static func purple_pixels_RGB8(width:Int, height:Int) -> [UInt8] {
-        var pixelData:[UInt8] = []
-        for _ in 0..<height {
-            for _ in 0..<width {
-                pixelData.append(0x77)
-                pixelData.append(0x00)
-                pixelData.append(randomByte())
-            }
-        }
-        return pixelData
-    }
+    // static func purple_pixels_RGB8(width:Int, height:Int) -> [UInt8] {
+    //     var pixelData:[UInt8] = []
+    //     for _ in 0..<height {
+    //         for _ in 0..<width {
+    //             pixelData.append(0x77)
+    //             pixelData.append(0x00)
+    //             pixelData.append(randomByte())
+    //         }
+    //     }
+    //     return pixelData
+    // }
     
-    static func truecolor_randomRGB8(width:Int, height:Int) -> [UInt8] {
-        var pixelData:[UInt8] = []
-        for _ in 0..<height {
-            for _ in 0..<width {
-                pixelData.append(randomByte())
-                pixelData.append(randomByte())
-                pixelData.append(randomByte())
-            }
-        }
-        return pixelData
-    }
-    
-    static func truecolor_randomRGBA8(width:Int, height:Int) -> [UInt8] {
+    static func truecolor_random8(width:Int, height:Int, includeAlpha:Bool = false) -> [UInt8] {
         var pixelData:[UInt8] = []
         
-        for _ in 0..<height {
-            for _ in 0..<width {
-                pixelData.append(randomByte())
-                pixelData.append(randomByte())
-                pixelData.append(randomByte())
-                pixelData.append(randomByte())
+        if includeAlpha {
+            for _ in 0..<height {
+                for _ in 0..<width {
+                    pixelData.append(randomByte())
+                    pixelData.append(randomByte())
+                    pixelData.append(randomByte())
+                    pixelData.append(randomByte())
+                }
+            }
+        } 
+        else {
+            for _ in 0..<height {
+                for _ in 0..<width {
+                    pixelData.append(randomByte())
+                    pixelData.append(randomByte())
+                    pixelData.append(randomByte())
+                }
             }
         }
         return pixelData
