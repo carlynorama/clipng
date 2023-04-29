@@ -46,7 +46,7 @@ extension clipng {
     struct random: ParsableCommand {
         
         static var configuration =
-        CommandConfiguration(abstract: "Generate a RGBA PNG file with each pixel a random 24 or 32 bit color.")
+        CommandConfiguration(abstract: "Generate a PNG file with each pixel a random color. 8 bit per channel. Grayscale or color, with or without alpha, depending on the flags.")
         
         @Argument var width:UInt32
         @Argument var height:UInt32
