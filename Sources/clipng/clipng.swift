@@ -4,6 +4,7 @@ import SwiftLIBPNG
 
 @main
 struct clipng:ParsableCommand {
+
     static var configuration = CommandConfiguration(
         // Optional abstracts and discussions are used for help output.
         abstract: "A interface for testing SwiftLIBPNG.",
@@ -68,18 +69,18 @@ extension clipng {
             if flags.includeAlpha {
                 if flags.isGrayScale { 
                     fileName = "random_GA8_\(FileIO.timeStamp()).png"
-                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.grayscale_random8(width: Int(width), height: Int(height), includeAlpha: true), width: width, height: height, bitDepth: .eight, colorType: .grayscaleA)
+                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.grayscale_random8(width: Int(width), height: Int(height), includeAlpha: true), width: width, height: height, bitDepth: .eight, colorType: .grayscaleA, metaInfo: generatePNGMetaText())
                 } else { 
                     fileName = "random_RGBA8_\(FileIO.timeStamp()).png"
-                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_random8(width: Int(width), height: Int(height), includeAlpha:true), width: width, height: height, bitDepth: .eight, colorType: .truecolorA)
+                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_random8(width: Int(width), height: Int(height), includeAlpha:true), width: width, height: height, bitDepth: .eight, colorType: .truecolorA, metaInfo: generatePNGMetaText())
                 }
             } else {
                 if flags.isGrayScale { 
                     fileName = "random_G8_\(FileIO.timeStamp()).png"
-                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.grayscale_random8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscale)
+                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.grayscale_random8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscale, metaInfo: generatePNGMetaText())
                 } else { 
                     fileName = "random_RGB8_\(FileIO.timeStamp()).png"
-                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_random8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor)
+                    data = try? SwiftLIBPNG.pngData(for:PixelGenerator.truecolor_random8(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor, metaInfo: generatePNGMetaText())
                 }
             }
             
@@ -107,10 +108,11 @@ extension clipng {
             let fileName:String
             if flags.includeAlpha {
                 fileName = "random_purple_RGBA8_\(FileIO.timeStamp()).png"
+                //TODO: Switch to main function?
                 data = SwiftLIBPNG.optionalPNGForRGBA(width: width, height: height, pixelData: PixelGenerator.purple_pixels(width: Int(width), height: Int(height), includeAlpha:true))
             } else {
                 fileName = "random_purple_RGB8_\(FileIO.timeStamp()).png"
-                data = try? SwiftLIBPNG.pngData(for:PixelGenerator.purple_pixels(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor)
+                data = try? SwiftLIBPNG.pngData(for:PixelGenerator.purple_pixels(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor, metaInfo: generatePNGMetaText())
             }
             
 
@@ -136,10 +138,10 @@ extension clipng {
             let fileName:String
             if flags.includeAlpha {
                 fileName = "verticalAlphaStripes_GA8_\(FileIO.timeStamp()).png"
-                data = try? SwiftLIBPNG.pngData(for: PixelGenerator.grayscale_randomAlphaTest(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscaleA)
+                data = try? SwiftLIBPNG.pngData(for: PixelGenerator.grayscale_randomAlphaTest(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscaleA, metaInfo:generatePNGMetaText() )
             } else {
                 fileName = "verticalStripes_G8_\(FileIO.timeStamp()).png"
-                data = try? SwiftLIBPNG.pngData(for: PixelGenerator.grayscale_verticalStripe(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscale)
+                data = try? SwiftLIBPNG.pngData(for: PixelGenerator.grayscale_verticalStripe(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .grayscale, metaInfo: generatePNGMetaText())
             }
 
             
@@ -165,5 +167,16 @@ extension clipng {
         } catch {
             print("could not save")
         }
+    }
+
+    static func generatePNGMetaText(comment:String? = nil) -> Dictionary<String, String> {
+        var base = [
+            "Author":"Carlyn Maw or PixelGenerator.swift, depending on who's asking.",
+            "Source":"https://github.com/carlynorama/clipng/"
+            ]
+        if let comment {
+            base["Comment"] = comment
+        }
+        return base
     }
 }
