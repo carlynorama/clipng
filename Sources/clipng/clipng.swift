@@ -169,7 +169,7 @@ extension clipng {
         }
     }
 
-    static func generatePNGMetaText(comment:String? = nil) -> Dictionary<String, String> {
+    static func generatePNGMetaText(_ comment:String? = nil) -> Dictionary<String, String> {
         var base = [
             "Author":"Carlyn Maw or PixelGenerator.swift, depending on who's asking.",
             "Source":"https://github.com/carlynorama/clipng/"
