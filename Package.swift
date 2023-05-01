@@ -7,7 +7,7 @@ let package = Package(
     name: "clipng",
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.2"),
-        .package(url: "https://github.com/carlynorama/SwiftLIBPNG.git", branch:"dev-for-CLI")
+        .package(url: "https://github.com/carlynorama/SwiftLIBPNG.git", from:"0.0.1")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
