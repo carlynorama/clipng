@@ -54,6 +54,30 @@ struct PixelGenerator {
         return pixelData
     }
     
+    static func purple_pixels_for_tod(width:Int, height:Int, includeAlpha:Bool = false) -> [UInt8] {
+        var pixelData:[UInt8] = []
+        if includeAlpha {
+            for _ in 0..<height {
+                for _ in 0..<width {
+                    pixelData.append(UInt8.random(in: 0...255))
+                    pixelData.append(0x00)
+                    pixelData.append(UInt8.random(in: 150...255))
+                    pixelData.append(0xFF)
+                }
+            }
+        } else {
+            for _ in 0..<height {
+                for _ in 0..<width {
+                    pixelData.append(UInt8.random(in: 0...255))
+                    pixelData.append(0x00)
+                    pixelData.append(UInt8.random(in: 150...255))
+                }
+            }
+        }
+
+        return pixelData
+    }
+    
     // static func purple_pixels_RGB8(width:Int, height:Int) -> [UInt8] {
     //     var pixelData:[UInt8] = []
     //     for _ in 0..<height {

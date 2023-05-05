@@ -109,10 +109,10 @@ extension clipng {
             if flags.includeAlpha {
                 fileName = "random_purple_RGBA8_\(FileIO.timeStamp()).png"
                 //TODO: Switch to main function?
-                data = SwiftLIBPNG.optionalPNGForRGBA(width: width, height: height, pixelData: PixelGenerator.purple_pixels(width: Int(width), height: Int(height), includeAlpha:true))
+                data = SwiftLIBPNG.optionalPNGForRGBA(width: width, height: height, pixelData: PixelGenerator.purple_pixels_for_tod(width: Int(width), height: Int(height), includeAlpha:true))
             } else {
                 fileName = "random_purple_RGB8_\(FileIO.timeStamp()).png"
-                data = try? SwiftLIBPNG.pngData(for:PixelGenerator.purple_pixels(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor, metaInfo: generatePNGMetaText())
+                data = try? SwiftLIBPNG.pngData(for:PixelGenerator.purple_pixels_for_tod(width: Int(width), height: Int(height)), width: width, height: height, bitDepth: .eight, colorType: .truecolor, metaInfo: generatePNGMetaText())
             }
             
 
